@@ -2,17 +2,17 @@
 
 Closed-form screens (generator_v021: filters.evaluate_all_pairs with the arguments of sampling.choose_sections, and the
 height check of run_dataset), evaluated for the chosen column-beam pair with the tributary axial force of an interior
-base column, Pu = (1.2 G + 1.6 Q) L_bay N_story:
+base column, Pu = (1.2 D + 1.6 L) L_bay N_story:
   1. section ductility of the column (with Ca = Pu / (0.90 Fy A)) and of the beam, TBEC 2018 Table 9.3: high or limited
      ductility limits met (the database contains both levels; the level is shown);
   2. column axial-load ratio Pu / Pye <= 0.50, Pye = A Fye;
-  3. gravity admissibility of the ground-storey column, Pg / Pc <= 0.50: Pg = (G (1 + 0.2 S_DS) + 0.30 Q) L_bay
-     N_story (the DD-2 gravity state, G + 0.30 Q + 0.3 Ed(Z) with Ed(Z) = (2/3) S_DS G, S_DS of DD-2 and the soil
+  3. gravity admissibility of the ground-storey column, Pg / Pc <= 0.50: Pg = (D (1 + 0.2 S_DS) + 0.3 L) L_bay
+     N_story (the DD-2 gravity state, D + 0.3 L + 0.3 Ed(Z) with Ed(Z) = (2/3) S_DS D, S_DS of DD-2 and the soil
      class) times the interior-support coefficient of a continuous beam (1.25, 1.10, 1.143, 1.132 for 2 to 5 bays)
      times 1.03 for the self weight, Pc = Fcr A with Fye about the axis of the smaller radius of gyration,
      buckling length h1;
-  4. beam gravity flexural check, w_u (L_bay - d_column)^2 / 12 <= 0.90 Wpl Fy with w_u = max(1.4 Gt, 1.2 Gt + 1.6 Q),
-     Gt = G plus the beam self weight;
+  4. beam gravity flexural check, w_u (L_bay - d_column)^2 / 12 <= 0.90 Wpl Fy with w_u = max(1.4 Dt, 1.2 Dt + 1.6 L),
+     Dt = D plus the beam self weight;
   5. clear lengths: L_bay - d_column > 0.20 m and h_typ - d_beam > 0.20 m;
   6. total height H_tot <= 28 m (height limit of the single-mode pushover at the reference site).
 Fy is the nominal yield strength and Fye = 1.5 Fy (S235), 1.3 Fy (S275), 1.1 Fy (S355), TBEC 2018 Table 5.1.
@@ -32,7 +32,7 @@ H_MAX = 28.0                 # m
 PHI_B, SPAN_DIVISOR = 0.90, 12.0
 AXIAL_LIMIT = 0.50
 SUPPORT_COEF = {2: 1.25, 3: 1.10, 4: 1.143, 5: 1.132}
-EZ_COEF = 0.2               # 0.3 Ed(Z) / G = 0.3 (2/3) S_DS
+EZ_COEF = 0.2               # 0.3 Ed(Z) / D = 0.3 (2/3) S_DS
 NOT_CHECKED = [
     ('First-mode effective mass ratio', '>= 0.70, needs a modal analysis'),
     ('Column P/Pc under the acceptance axial force', '<= 0.50, needs the gravity analysis'),
@@ -44,7 +44,7 @@ NOTE = ('Preliminary screening inside the database domain; it does not replace a
 
 
 def tributary_axial(f: FrameInput) -> float:
-    """Interior base-column axial estimate under 1.2G + 1.6Q [kN] (generator filters.tributary_axial)."""
+    """Interior base-column axial estimate under 1.2D + 1.6L [kN] (generator filters.tributary_axial)."""
     w_u = 1.2 * f.G_line + 1.6 * f.Q_line
     trib = f.L_bay if f.n_bay >= 2 else f.L_bay / 2.0
     return w_u * trib * f.n_story
@@ -93,8 +93,8 @@ def screens(f: FrameInput) -> list:
     Fcre = (0.658 ** (Fye / Fe)) * Fye if lam <= lam_c else 0.877 * Fe
     p_pc = P_g / (Fcre * c['A'])
     # beam gravity flexural check
-    Gt = f.G_line + RHO_STEEL * G_ACC * b['A']                              # G with the beam self weight
-    w_u = max(1.4 * Gt, 1.2 * Gt + 1.6 * f.Q_line)
+    Dt = f.G_line + RHO_STEEL * G_ACC * b['A']                              # D with the beam self weight
+    w_u = max(1.4 * Dt, 1.2 * Dt + 1.6 * f.Q_line)
     Mu = w_u * (f.L_bay - c['d']) ** 2 / SPAN_DIVISOR
     phiMp = PHI_B * b['Wpl'] * Fy
     # clear lengths and height
@@ -105,11 +105,11 @@ def screens(f: FrameInput) -> list:
              value=dc_col['level'], limit='high or limited', passed=dc_col['level'] != 'none', detail=dc_col),
         dict(key='duct_beam', name='Ductility, beam', criterion='TBEC 2018 Table 9.3, high or limited',
              value=dc_beam['level'], limit='high or limited', passed=dc_beam['level'] != 'none', detail=dc_beam),
-        dict(key='axial', name='Column axial load', criterion='Pu/Pye under 1.2G + 1.6Q',
+        dict(key='axial', name='Column axial load', criterion='Pu/Pye under 1.2D + 1.6L',
              value=f'{p_pye:.3f}', limit='<= 0.50', passed=bool(p_pye <= AXIAL_LIMIT)),
-        dict(key='gravity_pc', name='Column gravity admissibility', criterion='Pg/Pc under G + 0.30Q + 0.3Ed(Z) of DD-2, ground storey, minimum-axis Pc',
+        dict(key='gravity_pc', name='Column gravity admissibility', criterion='Pg/Pc under D + 0.3L + 0.3Ed(Z) of DD-2, ground storey, minimum-axis Pc',
              value=f'{p_pc:.3f}', limit='<= 0.50', passed=bool(p_pc <= AXIAL_LIMIT)),
-        dict(key='beam_gravity', name='Beam gravity flexure', criterion='Mu <= 0.90 Wpl Fy under max(1.4G, 1.2G + 1.6Q), G with beam self weight',
+        dict(key='beam_gravity', name='Beam gravity flexure', criterion='Mu <= 0.90 Wpl Fy under max(1.4D, 1.2D + 1.6L), D with beam self weight',
              value=f'{Mu:.1f} kNm', limit=f'<= {phiMp:.1f} kNm', passed=bool(Mu <= phiMp)),
         dict(key='clear', name='Clear lengths', criterion='beam and column clear lengths above 0.20 m',
              value=f'{clear_beam:.2f} m, {clear_col:.2f} m', limit='> 0.20 m',

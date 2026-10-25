@@ -3,10 +3,10 @@
 Pure-Python copies of the dataset generator (generator_v020, the generator of the database), no OpenSees import:
 - section properties from assets/sections_catalogue.csv (byte copy of the generator catalogue; profiles.py);
 - total height H_tot = h1 + (N_story - 1) h_typ and total width B_tot = N_bay L_bay;
-- seismic mass M of the modelled frame: the nodal masses of model_builder.Frame2D.build (beam line load G + 0.30 Q plus
+- seismic mass M of the modelled frame: the nodal masses of model_builder.Frame2D.build (beam line load D + 0.3 L plus
   the beam self weight over the tributary width, and half the column self mass above and below each floor; no leaning
   column), summed in the same order;
-- seismic weight W = (G + 0.30 Q) B_tot N_story of the demand ratio r_W, as the classification notebook forms it;
+- seismic weight W = (D + 0.3 L) B_tot N_story of the demand ratio r_W, as the classification notebook forms it;
 - the spectral parameters S_DS and S_D1 of the reference site for the soil class and the hazard level (the values stored
   in the database, assets/gui_spec.json);
 - the 21 model inputs in the order of the paper for one hazard level.
@@ -108,7 +108,7 @@ def seismic_mass(f: FrameInput) -> float:
 
 
 def seismic_weight(f: FrameInput) -> float:
-    """W [kN] of the demand ratio r_W: (G + 0.30 Q) B_tot N_story, as the classification notebook forms it."""
+    """W [kN] of the demand ratio r_W: (D + 0.3 L) B_tot N_story, as the classification notebook forms it."""
     return (f.G_line + LIVE_LOAD_N * f.Q_line) * total_width(f) * f.n_story
 
 

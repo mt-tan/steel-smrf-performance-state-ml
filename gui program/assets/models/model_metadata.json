@@ -526,7 +526,7 @@
    "DCR_delta": "delta_t / delta_u",
    "mu_d": "delta_t / delta_y",
    "V_at_dt_over_Vmax": "V(delta_t) / V_max",
-   "Vy_over_W_Sa": "V_y / (W S_a(T_1)), W = (G + 0.30 Q) B_tot N_story"
+   "Vy_over_W_Sa": "V_y / (W S_a(T_1)), W = (D + 0.3 L) B_tot N_story"
   },
   "spectrum": "TBEC 2018 Eq. 2.2 with S_DS, S_D1 of the row, T_L = 6 s, evaluated at the predicted T_1",
   "floor": "1e-9 on V_y, V_max, delta_y, delta_t, delta_u, T_1, H_tot, W and S_a; none on V(delta_t)"
