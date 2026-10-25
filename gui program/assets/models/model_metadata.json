@@ -1,0 +1,787 @@
+{
+ "purpose": "deployment arrays of the GUI; not used for any number of the paper",
+ "created": "2026-09-28",
+ "script": "gui/train_deployment_models.py",
+ "lock": "v1 (qa/CANONICAL_LOCK.md)",
+ "input_order": [
+  "n_story",
+  "n_bay",
+  "L_bay",
+  "h1",
+  "h_typ",
+  "Htot",
+  "B_tot",
+  "G_line",
+  "Q_line",
+  "M_building",
+  "grade_ord",
+  "soil_ord",
+  "d_col",
+  "bf_col",
+  "tf_col",
+  "tw_col",
+  "d_beam",
+  "bf_beam",
+  "tf_beam",
+  "tw_beam",
+  "hazard_ord"
+ ],
+ "input_units": {
+  "n_story": "",
+  "n_bay": "",
+  "L_bay": "m",
+  "h1": "m",
+  "h_typ": "m",
+  "Htot": "m",
+  "B_tot": "m",
+  "G_line": "kN/m",
+  "Q_line": "kN/m",
+  "M_building": "t",
+  "grade_ord": "",
+  "soil_ord": "",
+  "d_col": "mm",
+  "bf_col": "mm",
+  "tf_col": "mm",
+  "tw_col": "mm",
+  "d_beam": "mm",
+  "bf_beam": "mm",
+  "tf_beam": "mm",
+  "tw_beam": "mm",
+  "hazard_ord": ""
+ },
+ "encodings": {
+  "grade_ord": {
+   "S235": 0,
+   "S275": 1,
+   "S355": 2
+  },
+  "soil_ord": {
+   "ZA": 0,
+   "ZB": 1,
+   "ZC": 2,
+   "ZD": 3,
+   "ZE": 4
+  },
+  "hazard_ord": {
+   "DD-2": 0,
+   "DD-1": 1
+  }
+ },
+ "first_stage": {
+  "family": "ANN (MLPRegressor), mean of five networks per target",
+  "targets": {
+   "Vy": {
+    "unit": "kN",
+    "transform": "log1p",
+    "n_layers": 5,
+    "activation": "relu",
+    "out_activation": "identity",
+    "hidden_layer_sizes": [
+     256,
+     128,
+     64,
+     32
+    ],
+    "optuna_entry": {
+     "arch": "256-128-64-32",
+     "alpha": 1.896648617304078e-07,
+     "lr": 0.00265770704108804,
+     "activation": "relu",
+     "batch_size": 128,
+     "max_iter": 300
+    },
+    "members": [
+     {
+      "random_state": 42,
+      "n_iter": 28,
+      "n_fit_rows": 145034,
+      "fit_seconds": 78.9
+     },
+     {
+      "random_state": 1,
+      "n_iter": 25,
+      "n_fit_rows": 145034,
+      "fit_seconds": 67.2
+     },
+     {
+      "random_state": 2,
+      "n_iter": 29,
+      "n_fit_rows": 145034,
+      "fit_seconds": 82.8
+     },
+     {
+      "random_state": 3,
+      "n_iter": 25,
+      "n_fit_rows": 145034,
+      "fit_seconds": 72.4
+     },
+     {
+      "random_state": 4,
+      "n_iter": 28,
+      "n_fit_rows": 145034,
+      "fit_seconds": 80.6
+     }
+    ]
+   },
+   "dy": {
+    "unit": "m",
+    "transform": "lognormH",
+    "n_layers": 5,
+    "activation": "tanh",
+    "out_activation": "identity",
+    "hidden_layer_sizes": [
+     256,
+     128,
+     64,
+     32
+    ],
+    "optuna_entry": {
+     "arch": "256-128-64-32",
+     "alpha": 0.00011045779506381211,
+     "lr": 0.004568451782344627,
+     "activation": "tanh",
+     "batch_size": 128,
+     "max_iter": 600
+    },
+    "members": [
+     {
+      "random_state": 42,
+      "n_iter": 18,
+      "n_fit_rows": 145034,
+      "fit_seconds": 59.7
+     },
+     {
+      "random_state": 1,
+      "n_iter": 18,
+      "n_fit_rows": 145034,
+      "fit_seconds": 58.9
+     },
+     {
+      "random_state": 2,
+      "n_iter": 18,
+      "n_fit_rows": 145034,
+      "fit_seconds": 61.1
+     },
+     {
+      "random_state": 3,
+      "n_iter": 18,
+      "n_fit_rows": 145034,
+      "fit_seconds": 65.0
+     },
+     {
+      "random_state": 4,
+      "n_iter": 18,
+      "n_fit_rows": 145034,
+      "fit_seconds": 61.1
+     }
+    ]
+   },
+   "Vmax": {
+    "unit": "kN",
+    "transform": "log1p",
+    "n_layers": 5,
+    "activation": "relu",
+    "out_activation": "identity",
+    "hidden_layer_sizes": [
+     256,
+     128,
+     64,
+     32
+    ],
+    "optuna_entry": {
+     "arch": "256-128-64-32",
+     "alpha": 0.00673772160882777,
+     "lr": 0.0015721556001597658,
+     "activation": "relu",
+     "batch_size": 128,
+     "max_iter": 500
+    },
+    "members": [
+     {
+      "random_state": 42,
+      "n_iter": 27,
+      "n_fit_rows": 145034,
+      "fit_seconds": 76.1
+     },
+     {
+      "random_state": 1,
+      "n_iter": 30,
+      "n_fit_rows": 145034,
+      "fit_seconds": 83.8
+     },
+     {
+      "random_state": 2,
+      "n_iter": 31,
+      "n_fit_rows": 145034,
+      "fit_seconds": 89.1
+     },
+     {
+      "random_state": 3,
+      "n_iter": 29,
+      "n_fit_rows": 145034,
+      "fit_seconds": 85.0
+     },
+     {
+      "random_state": 4,
+      "n_iter": 27,
+      "n_fit_rows": 145034,
+      "fit_seconds": 78.1
+     }
+    ]
+   },
+   "dmax": {
+    "unit": "m",
+    "transform": "lognormH",
+    "n_layers": 3,
+    "activation": "tanh",
+    "out_activation": "identity",
+    "hidden_layer_sizes": [
+     256,
+     128
+    ],
+    "optuna_entry": {
+     "arch": "256-128",
+     "alpha": 1.947269809708885e-06,
+     "lr": 0.004916017401419067,
+     "activation": "tanh",
+     "batch_size": 128,
+     "max_iter": 300
+    },
+    "members": [
+     {
+      "random_state": 42,
+      "n_iter": 21,
+      "n_fit_rows": 145034,
+      "fit_seconds": 52.3
+     },
+     {
+      "random_state": 1,
+      "n_iter": 27,
+      "n_fit_rows": 145034,
+      "fit_seconds": 69.0
+     },
+     {
+      "random_state": 2,
+      "n_iter": 28,
+      "n_fit_rows": 145034,
+      "fit_seconds": 74.9
+     },
+     {
+      "random_state": 3,
+      "n_iter": 34,
+      "n_fit_rows": 145034,
+      "fit_seconds": 90.8
+     },
+     {
+      "random_state": 4,
+      "n_iter": 27,
+      "n_fit_rows": 145034,
+      "fit_seconds": 69.8
+     }
+    ]
+   },
+   "V_at_dt": {
+    "unit": "kN",
+    "transform": "none",
+    "n_layers": 3,
+    "activation": "relu",
+    "out_activation": "identity",
+    "hidden_layer_sizes": [
+     512,
+     256
+    ],
+    "optuna_entry": {
+     "arch": "512-256",
+     "alpha": 0.00032924985689154914,
+     "lr": 0.000587815432146656,
+     "activation": "relu",
+     "batch_size": 128,
+     "max_iter": 700
+    },
+    "members": [
+     {
+      "random_state": 42,
+      "n_iter": 184,
+      "n_fit_rows": 140071,
+      "fit_seconds": 1536.5
+     },
+     {
+      "random_state": 1,
+      "n_iter": 128,
+      "n_fit_rows": 140071,
+      "fit_seconds": 1072.9
+     },
+     {
+      "random_state": 2,
+      "n_iter": 144,
+      "n_fit_rows": 140071,
+      "fit_seconds": 1244.9
+     },
+     {
+      "random_state": 3,
+      "n_iter": 145,
+      "n_fit_rows": 140071,
+      "fit_seconds": 1206.8
+     },
+     {
+      "random_state": 4,
+      "n_iter": 211,
+      "n_fit_rows": 140071,
+      "fit_seconds": 1529.5
+     }
+    ]
+   },
+   "dt": {
+    "unit": "m",
+    "transform": "lognormH",
+    "n_layers": 5,
+    "activation": "tanh",
+    "out_activation": "identity",
+    "hidden_layer_sizes": [
+     256,
+     128,
+     64,
+     32
+    ],
+    "optuna_entry": {
+     "arch": "256-128-64-32",
+     "alpha": 0.000518718703747057,
+     "lr": 0.001690121704008466,
+     "activation": "tanh",
+     "batch_size": 128,
+     "max_iter": 300
+    },
+    "members": [
+     {
+      "random_state": 42,
+      "n_iter": 18,
+      "n_fit_rows": 145034,
+      "fit_seconds": 59.8
+     },
+     {
+      "random_state": 1,
+      "n_iter": 18,
+      "n_fit_rows": 145034,
+      "fit_seconds": 62.2
+     },
+     {
+      "random_state": 2,
+      "n_iter": 18,
+      "n_fit_rows": 145034,
+      "fit_seconds": 62.8
+     },
+     {
+      "random_state": 3,
+      "n_iter": 18,
+      "n_fit_rows": 145034,
+      "fit_seconds": 63.6
+     },
+     {
+      "random_state": 4,
+      "n_iter": 18,
+      "n_fit_rows": 145034,
+      "fit_seconds": 63.0
+     }
+    ]
+   },
+   "du": {
+    "unit": "m",
+    "transform": "lognormH",
+    "n_layers": 5,
+    "activation": "tanh",
+    "out_activation": "identity",
+    "hidden_layer_sizes": [
+     256,
+     128,
+     64,
+     32
+    ],
+    "optuna_entry": {
+     "arch": "256-128-64-32",
+     "alpha": 3.517384747035966e-05,
+     "lr": 0.0034659274835521694,
+     "activation": "tanh",
+     "batch_size": 128,
+     "max_iter": 700
+    },
+    "members": [
+     {
+      "random_state": 42,
+      "n_iter": 20,
+      "n_fit_rows": 145005,
+      "fit_seconds": 65.7
+     },
+     {
+      "random_state": 1,
+      "n_iter": 20,
+      "n_fit_rows": 145005,
+      "fit_seconds": 69.6
+     },
+     {
+      "random_state": 2,
+      "n_iter": 20,
+      "n_fit_rows": 145005,
+      "fit_seconds": 70.3
+     },
+     {
+      "random_state": 3,
+      "n_iter": 20,
+      "n_fit_rows": 145005,
+      "fit_seconds": 72.9
+     },
+     {
+      "random_state": 4,
+      "n_iter": 20,
+      "n_fit_rows": 145005,
+      "fit_seconds": 68.9
+     }
+    ]
+   },
+   "T1": {
+    "unit": "s",
+    "transform": "raw",
+    "n_layers": 5,
+    "activation": "relu",
+    "out_activation": "identity",
+    "hidden_layer_sizes": [
+     256,
+     128,
+     64,
+     32
+    ],
+    "optuna_entry": {
+     "arch": "256-128-64-32",
+     "alpha": 0.001187776841152066,
+     "lr": 0.003170968266168181,
+     "activation": "relu",
+     "batch_size": 128,
+     "max_iter": 500
+    },
+    "members": [
+     {
+      "random_state": 42,
+      "n_iter": 24,
+      "n_fit_rows": 145034,
+      "fit_seconds": 63.3
+     },
+     {
+      "random_state": 1,
+      "n_iter": 22,
+      "n_fit_rows": 145034,
+      "fit_seconds": 62.8
+     },
+     {
+      "random_state": 2,
+      "n_iter": 22,
+      "n_fit_rows": 145034,
+      "fit_seconds": 63.6
+     },
+     {
+      "random_state": 3,
+      "n_iter": 23,
+      "n_fit_rows": 145034,
+      "fit_seconds": 62.8
+     },
+     {
+      "random_state": 4,
+      "n_iter": 23,
+      "n_fit_rows": 145034,
+      "fit_seconds": 61.4
+     }
+    ]
+   }
+  },
+  "seeds": [
+   42,
+   1,
+   2,
+   3,
+   4
+  ],
+  "mean_order": [
+   1,
+   2,
+   3,
+   4,
+   42
+  ],
+  "transforms": {
+   "log1p": "z = log(1 + y); y = exp(z) - 1",
+   "lognormH": "z = log(y / H_tot); y = exp(z) H_tot",
+   "none": "z = y",
+   "raw": "z = y"
+  },
+  "cap": "V_at_dt of every network = min(V_at_dt, V_max of the network with the same random_state), then the arithmetic mean of the five networks in physical units, seeds in ascending order (notebook combine_members)"
+ },
+ "ratios": {
+  "order": [
+   "theta_t",
+   "DCR_delta",
+   "mu_d",
+   "V_at_dt_over_Vmax",
+   "Vy_over_W_Sa"
+  ],
+  "definitions": {
+   "theta_t": "delta_t / H_tot",
+   "DCR_delta": "delta_t / delta_u",
+   "mu_d": "delta_t / delta_y",
+   "V_at_dt_over_Vmax": "V(delta_t) / V_max",
+   "Vy_over_W_Sa": "V_y / (W S_a(T_1)), W = (G + 0.30 Q) B_tot N_story"
+  },
+  "spectrum": "TBEC 2018 Eq. 2.2 with S_DS, S_D1 of the row, T_L = 6 s, evaluated at the predicted T_1",
+  "floor": "1e-9 on V_y, V_max, delta_y, delta_t, delta_u, T_1, H_tot, W and S_a; none on V(delta_t)"
+ },
+ "classifier": {
+  "family": "MLPClassifier, soft vote of five networks",
+  "seeds": [
+   42,
+   1,
+   2,
+   3,
+   4
+  ],
+  "states": [
+   "IO",
+   "LS",
+   "CP",
+   "C"
+  ],
+  "class_codes": {
+   "IO": 0,
+   "LS": 1,
+   "CP": 2,
+   "C": 3
+  },
+  "feature_order": [
+   "n_story",
+   "n_bay",
+   "L_bay",
+   "h1",
+   "h_typ",
+   "Htot",
+   "B_tot",
+   "G_line",
+   "Q_line",
+   "M_building",
+   "grade_ord",
+   "soil_ord",
+   "d_col",
+   "bf_col",
+   "tf_col",
+   "tw_col",
+   "d_beam",
+   "bf_beam",
+   "tf_beam",
+   "tw_beam",
+   "hazard_ord",
+   "theta_t",
+   "DCR_delta",
+   "mu_d",
+   "V_at_dt_over_Vmax",
+   "Vy_over_W_Sa"
+  ],
+  "n_layers": 3,
+  "activation": "relu",
+  "out_activation": "softmax",
+  "hidden_layer_sizes": [
+   256,
+   128
+  ],
+  "optuna_entry": {
+   "arch": "256-128",
+   "alpha": 0.003311054095480031,
+   "lr": 0.0001880353669749504,
+   "activation": "relu"
+  },
+  "effective": {
+   "alpha": 0.003311054095480031,
+   "learning_rate_init": 0.0001880353669749504,
+   "max_iter": 400,
+   "early_stopping": false,
+   "n_iter_no_change": 15,
+   "batch_size": "auto",
+   "solver": "adam",
+   "class_weight": null
+  },
+  "members": [
+   {
+    "random_state": 42,
+    "n_iter": 308,
+    "fit_seconds": 490.3
+   },
+   {
+    "random_state": 1,
+    "n_iter": 317,
+    "fit_seconds": 468.8
+   },
+   {
+    "random_state": 2,
+    "n_iter": 400,
+    "fit_seconds": 591.2
+   },
+   {
+    "random_state": 3,
+    "n_iter": 391,
+    "fit_seconds": 588.5
+   },
+   {
+    "random_state": 4,
+    "n_iter": 342,
+    "fit_seconds": 518.5
+   }
+  ],
+  "decision": "mean of the five softmax outputs, divided by its sum (predict_algo_clf); predicted state = largest probability"
+ },
+ "realized_ranges": {
+  "n_story": [
+   2.0,
+   8.0
+  ],
+  "n_bay": [
+   2.0,
+   5.0
+  ],
+  "L_bay": [
+   4.000017414054628,
+   6.999999624260797
+  ],
+  "h1": [
+   3.500003755532523,
+   4.499988384359739
+  ],
+  "h_typ": [
+   3.000007569284941,
+   3.9999911633002925
+  ],
+  "Htot": [
+   6.510879313852763,
+   27.999992756744625
+  ],
+  "B_tot": [
+   8.000166381977262,
+   34.999466047715
+  ],
+  "G_line": [
+   8.000286103694187,
+   24.999980033544258
+  ],
+  "Q_line": [
+   2.000031129124948,
+   7.9999781369493626
+  ],
+  "M_building": [
+   16.256479459459506,
+   789.0084026825431
+  ],
+  "grade_ord": [
+   0.0,
+   2.0
+  ],
+  "soil_ord": [
+   0.0,
+   4.0
+  ],
+  "d_col": [
+   100.0,
+   540.0
+  ],
+  "bf_col": [
+   100.0,
+   300.0
+  ],
+  "tf_col": [
+   8.0,
+   24.0
+  ],
+  "tw_col": [
+   5.0,
+   13.5
+  ],
+  "d_beam": [
+   120.0,
+   500.0
+  ],
+  "bf_beam": [
+   64.0,
+   200.0
+  ],
+  "tf_beam": [
+   6.3,
+   16.0
+  ],
+  "tw_beam": [
+   4.4,
+   10.2
+  ],
+  "hazard_ord": [
+   0.0,
+   0.0
+  ]
+ },
+ "provenance": {
+  "data_file": "data/batch_productionA_seed42_paper2_v024.csv",
+  "data_sha256": "ca54943384ce011031d40f805b19cc786d8c279e80fbbb3236b7643f7ad78b31",
+  "first_stage_file": "ML/outputs/shared/first_stage_v1.pkl",
+  "first_stage_sha256": "c1b8ed93d8061e89521e4b9dbd0700ea056efd8de1bc1e76bff6e0556546baaa",
+  "first_stage_optuna_sha256": "94fd5cedfe824b85b36bf29de830e2c7d9baedeba584cbc0708d22614075c06c",
+  "classifier_optuna_sha256": "43d9712db05457fd038acb664360eeeea82d5815d020478d40877b1c46df8d1e",
+  "classifier_cache": "ML/outputs/paper2_clf/cache/canonical/clf_final_MLP.pkl",
+  "classifier_cache_sha256": "3eb0f53a5d76eacd395bacc975cf4afdafa0ccce9cced5bcb11bccc98a7ad1a8",
+  "n_train_rows": 145034,
+  "n_test_rows": 62152,
+  "python": "3.12.14",
+  "numpy": "2.5.3",
+  "pandas": "2.3.3",
+  "scikit_learn": "1.9.1",
+  "scipy": "1.18.1",
+  "joblib": "1.6.0",
+  "blas_main_process": [
+   {
+    "api": "openblas",
+    "threads": 24
+   },
+   {
+    "api": "openmp",
+    "threads": 24
+   },
+   {
+    "api": "openblas",
+    "threads": 24
+   }
+  ],
+  "blas_threads_in_fits": 1
+ },
+ "gate": {
+  "tier": "G1",
+  "rule": "max relative difference < 1e-12 for every value, identical predicted states",
+  "n_test_rows": 62152,
+  "max_rel_diff": {
+   "Vy": 5.216309854431098e-16,
+   "dy": 7.184351394203922e-16,
+   "Vmax": 6.69799842320424e-16,
+   "dmax": 5.90986893595995e-16,
+   "V_at_dt": 4.869984541188034e-16,
+   "dt": 8.815579617004112e-16,
+   "du": 4.918115101674962e-16,
+   "T1": 4.0516692694294577e-16,
+   "theta_t": 8.109768379921792e-16,
+   "DCR_delta": 1.3180207966193012e-15,
+   "mu_d": 1.1424664321449385e-15,
+   "V_at_dt_over_Vmax": 5.844059258946919e-16,
+   "Vy_over_W_Sa": 5.606115290083424e-16,
+   "P(IO)": 3.975415750112164e-14,
+   "P(LS)": 1.1839247443489193e-13,
+   "P(CP)": 7.369373677920695e-14,
+   "P(C)": 3.25280228604132e-14
+  },
+  "identical_states": 62152,
+  "raw_input_path_max_rel_diff": 1.1839247443489193e-13,
+  "raw_input_path_identical_states": 62152,
+  "refit_first_stage_bit_identical": true,
+  "refit_classifier_arrays_equal": true,
+  "report": "qa/task10b/deployment_gate.md"
+ },
+ "files": {
+  "two_stage_weights.npz": "f7d2fc847723006de5e83971938822a8416f3e21ae1d1898aac557ceaadbda13"
+ }
+}
